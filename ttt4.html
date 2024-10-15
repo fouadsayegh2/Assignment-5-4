@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Part 4</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            font-size: 48px;
+            color: navy;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .square {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+        .square:hover {
+            background-color: lightgray;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: 100px 100px 100px;
+            grid-gap: 5px;
+            width: 315px;
+            margin: 20px auto;
+        }
+        #turnDisplay, #winCondition {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid black;
+            width: 300px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #startButton {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+
+    <div id = "turnDisplay">X's Turn</div>
+
+    <div class = "board" id="gameBoard"></div>
+
+    <div id = "winCondition">Win condition will be displayed here</div>
+
+    <button id = "startButton">Start Game</button>
+
+    <script>
+        const NUM_SQUARES = 9;
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+        let boardHTML = "";
+        let currentTurn = "X";
+        let gameActive = true;
+        let moves = [];
+
+        function startGame() {
+            boardHTML = "";
+            moves = [];
+
+            for (let i = 0; i < NUM_SQUARES; i++) {
+                moves.push("-");
+            }
+
+            for (let i = 0; i < NUM_SQUARES; i++) {
+                boardHTML += "<div class='square' id='sq" + i + "'></div>";
+            }
+            document.getElementById("gameBoard").innerHTML = boardHTML;
+
+            gameActive = true;
+            currentTurn = "X";
+            document.getElementById("turnDisplay").innerText = currentTurn + "'s Turn";
+            document.getElementById("winCondition").innerText = "Win condition will be displayed here!";
+
+            for (let i = 0; i < NUM_SQUARES; i++) {
+                let square = document.getElementById("sq" + i);
+                square.addEventListener("click", function() {
+                    if (gameActive && square.innerText === "") {
+                        square.innerText = currentTurn;
+                        moves[i] = currentTurn;
+                        checkWinOrTie();
+                        toggleTurn();
+                    }
+                });
+            }
+        }
+
+        function toggleTurn() {
+            currentTurn = currentTurn === "X" ? "O" : "X";
+            document.getElementById("turnDisplay").innerText = currentTurn + "'s Turn";
+        }
+
+        function checkWinOrTie() {
+            let hasWinner = false;
+
+            for (let i = 0; i < winConditions.length; i++) {
+                const [a, b, c] = winConditions[i];
+                if (moves[a] === currentTurn && moves[a] === moves[b] && moves[a] === moves[c]) {
+                    hasWinner = true;
+                    break;
+                }
+            }
+
+            if (hasWinner) {
+                document.getElementById("winCondition").innerText = currentTurn + " Wins!";
+                gameActive = false;
+            } else {
+                let isTie = true;
+                for (let i = 0; i < NUM_SQUARES; i++) {
+                    if (moves[i] === "-") {
+                        isTie = false;
+                        break;
+                    }
+                }
+
+                if (isTie) {
+                    document.getElementById("winCondition").innerText = "It's a tie!";
+                    gameActive = false;
+                }
+            }
+        }
+
+        document.getElementById("startButton").addEventListener("click", startGame);
+
+        startGame();
+    </script>
+</body>
+</html>
